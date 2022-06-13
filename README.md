@@ -6,6 +6,11 @@ Includes code for generating branching ratios, electric dipole coupling elements
 * `numpy`
 * `centrex_TlF_hamiltonian`
 
+## Installation
+`python -m pip install .`  
+where `.` is the path to the directory. To install directly from `Github` use:  
+`python -m pip install git+https://github.com/ograsdijk/CeNTREX-TlF-Couplings`
+
 ## Generating branching ratios
 The code below generates branching ratios from `|J'=1, F1'=1/2, mF=0>` to all states in the `J=1` manifold.
 ```Python
