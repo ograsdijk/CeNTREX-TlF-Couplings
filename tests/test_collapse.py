@@ -18,5 +18,6 @@ def test_collapse_matrices():
     C_array = couplings.collapse_matrices(
         QN, ground_states, excited_states, gamma=1.56e6
     )
+
     C_test = np.load(Path(__file__).parent / "collapse_matrices_test.npy")
     assert np.allclose(C_array, C_test)
