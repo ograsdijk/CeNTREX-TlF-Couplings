@@ -5,7 +5,7 @@ import numpy as np
 import numpy.typing as npt
 from centrex_TlF_hamiltonian import states
 
-from .utils_compact import compact_BR_array_indices
+from .utils_compact import compact_C_array_indices
 
 from .branching import calculate_br
 
@@ -64,5 +64,5 @@ def collapse_matrices(
         for qnc in qn_compact:
             indices_compact = states.get_indices_quantumnumbers(qnc, QN_compact)
             QN_compact = states.compact_QN_coupled_indices(QN_compact, indices_compact)
-            C_array = compact_BR_array_indices(C_array, indices_compact)
+            C_array = compact_C_array_indices(C_array, gamma, indices_compact)
     return C_array
