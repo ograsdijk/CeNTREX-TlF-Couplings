@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Sequence
+from typing import List, Sequence, Union
 from centrex_TlF_hamiltonian.states.states import CoupledBasisState
 
 import numpy as np
@@ -13,6 +13,8 @@ __all__ = [
     "generate_coupling_matrix",
     "generate_coupling_field",
     "generate_coupling_field_automatic",
+    "CouplingFields",
+    "CouplingField",
 ]
 
 
@@ -83,37 +85,53 @@ class CouplingFields:
 
 
 def generate_coupling_field(
-    ground_main_approx,
-    excited_main_approx,
-    ground_states_approx,
-    excited_states_approx,
-    H_rot,
-    QN,
-    V_ref,
-    pol_main=np.array([0, 0, 1]),
-    pol_vecs=[],
+    ground_main_approx: states.State,
+    excited_main_approx: states.State,
+    ground_states_approx: Sequence[states.State],
+    excited_states_approx: Sequence[states.State],
+    QN_basis: Sequence[states.State],
+    H_rot: npt.NDArray[np.complex_],
+    QN: Sequence[states.State],
+    V_ref: npt.NDArray[np.complex_],
+    pol_main: npt.NDArray[np.float_] = np.array([0, 0, 1]),
+    pol_vecs: Sequence[npt.NDArray[np.float_]] = [],
     relative_coupling: float = 1e-3,
     absolute_coupling: float = 1e-6,
     normalize_pol: bool = True,
 ) -> CouplingFields:
-    QN_approx_basis = ground_states_approx + excited_states_approx
+    assert isinstance(pol_main, np.ndarray), (
+        "supply a Sequence of np.ndarrays with "
+        "dtype np.float_ for pol_vecs"
+    )
+    assert isinstance(pol_vecs[0], np.ndarray), (
+        "supply a Sequence of np.ndarrays with "
+        "dtype np.float_ for pol_vecs"
+    )
+    if not np.issubdtype(pol_main.dtype, np.float_):
+        pol_main.astype(np.float_)
+    if not np.issubdtype(pol_vecs[0].dtype, np.float_):
+        pol_vecs = [pol.astype(np.float_) for pol in pol_vecs]
+
     ground_states = states.find_exact_states(
-        ground_states_approx, QN_approx_basis, QN, H_rot, V_ref=V_ref
+        ground_states_approx, QN_basis, QN, H_rot, V_ref=V_ref
     )
     excited_states = states.find_exact_states(
-        excited_states_approx, QN_approx_basis, QN, H_rot, V_ref=V_ref
+        excited_states_approx, QN_basis, QN, H_rot, V_ref=V_ref
     )
     ground_main = states.find_exact_states(
-        [ground_main_approx], QN_approx_basis, QN, H_rot, V_ref=V_ref
+        [ground_main_approx], QN_basis, QN, H_rot, V_ref=V_ref
     )[0]
     excited_main = states.find_exact_states(
-        [excited_main_approx], QN_approx_basis, QN, H_rot, V_ref=V_ref
+        [excited_main_approx], QN_basis, QN, H_rot, V_ref=V_ref
     )[0]
 
     states.check_approx_state_exact_state(ground_main_approx, ground_main)
     states.check_approx_state_exact_state(excited_main_approx, excited_main)
     ME_main = generate_ED_ME_mixed_state(
-        excited_main, ground_main, pol_vec=pol_main, normalize_pol=normalize_pol
+        excited_main,
+        ground_main,
+        pol_vec=np.asarray(pol_main, dtype=np.float_),
+        normalize_pol=normalize_pol,
     )
 
     _ground_main: CoupledBasisState = ground_main.largest  # type: ignore
@@ -147,6 +165,7 @@ def generate_coupling_field(
 def generate_coupling_field_automatic(
     ground_states_approx: Sequence[states.State],
     excited_states_approx: Sequence[states.State],
+    QN_basis: Sequence[states.State],
     H_rot: npt.NDArray[np.complex_],
     QN: Sequence[states.State],
     V_ref: npt.NDArray[np.complex_],
@@ -161,6 +180,8 @@ def generate_coupling_field_automatic(
     Args:
         ground_states_approx (list): list of approximate ground states
         excited_states_approx (list): list of approximate excited states
+        QN_basis (Sequence[states.State]): Sequence of States the H_rot was constructed
+                                            from
         H_rot (np.ndarray): System hamiltonian in the rotational frame
         QN (list): list of states in the system
         V_ref ([type]): [description]
@@ -185,18 +206,23 @@ def generate_coupling_field_automatic(
                                 polarization, containing the polarization and coupling
                                 field
     """
+    assert isinstance(pol_vecs[0], np.ndarray), (
+        "supply a Sequence of np.ndarrays with "
+        "dtype np.float_ for pol_vecs"
+    )
     pol_main = pol_vecs[0]
     ground_main_approx, excited_main_approx = select_main_states(
         ground_states_approx, excited_states_approx, pol_main
     )
     return generate_coupling_field(
-        ground_main_approx,
-        excited_main_approx,
-        ground_states_approx,
-        excited_states_approx,
-        H_rot,
-        QN,
-        V_ref,
+        ground_main_approx=ground_main_approx,
+        excited_main_approx=excited_main_approx,
+        ground_states_approx=ground_states_approx,
+        excited_states_approx=excited_states_approx,
+        QN_basis=QN_basis,
+        H_rot=H_rot,
+        QN=QN,
+        V_ref=V_ref,
         pol_main=pol_main,
         pol_vecs=pol_vecs,
         relative_coupling=relative_coupling,
