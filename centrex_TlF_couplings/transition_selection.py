@@ -13,7 +13,7 @@ __all__ = ["TransitionSelector"]
 class TransitionSelector:
     ground: Sequence[states.State]
     excited: Sequence[states.State]
-    polarizations: Sequence[npt.NDArray[np.float_]]
+    polarizations: Sequence[npt.NDArray[np.complex_]]
     polarization_symbols: List[smp.Symbol]
     Ω: smp.Symbol
     δ: smp.Symbol

@@ -11,7 +11,7 @@ __all__ = ["generate_ED_ME_mixed_state", "ED_ME_coupled"]
 def generate_ED_ME_mixed_state(
     bra: states.State,
     ket: states.State,
-    pol_vec: npt.NDArray[np.float_] = np.array([1.0, 1.0, 1.0]),
+    pol_vec: npt.NDArray[np.complex_] = np.array([1.0, 1.0, 1.0], dtype=np.complex_),
     reduced: bool = False,
     normalize_pol: bool = True,
 ) -> complex:
@@ -39,7 +39,7 @@ def generate_ED_ME_mixed_state(
 def ED_ME_coupled(
     bra: states.CoupledBasisState,
     ket: states.CoupledBasisState,
-    pol_vec: Tuple[float, float, float] = (1.0, 1.0, 1.0),
+    pol_vec: Tuple[complex, complex, complex] = (1.0 + 0j, 1.0 + 0j, 1.0 + 0j),
     rme_only: bool = False,
 ) -> complex:
     """calculate electric dipole matrix elements between coupled basis states

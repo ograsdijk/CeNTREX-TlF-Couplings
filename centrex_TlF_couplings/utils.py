@@ -26,7 +26,7 @@ def check_transition_coupled_allowed(
         tuple: (allowed boolean, error message)
     """
     ΔF = int(state2.F - state1.F)
-    ΔmF = int(state2.mF - state1.mF)
+    ΔmF = np.abs(int(state2.mF - state1.mF))
     ΔP = int(state2.P - state1.P)
 
     flag_ΔP = abs(ΔP) != 2
@@ -85,7 +85,7 @@ def assert_transition_coupled_allowed(
 def select_main_states(
     ground_states: Sequence[states.State],
     excited_states: Sequence[states.State],
-    polarization: npt.NDArray[np.float_],
+    polarization: npt.NDArray[np.complex_],
 ) -> Tuple[states.State, states.State]:
     """Select main states for calculating the transition strength to normalize
     the Rabi rate with
