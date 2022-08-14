@@ -7,7 +7,7 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = ">=3.8, <3.11"
-numpy = "^1.20.0"
+numpy = "^1.20"
 centrex_TlF_hamiltonian = "^0.1"
 
 [tool.poetry.dev-dependencies]
