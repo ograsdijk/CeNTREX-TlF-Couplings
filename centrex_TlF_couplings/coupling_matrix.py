@@ -136,7 +136,7 @@ def generate_coupling_field(
     _excited_main: CoupledBasisState = excited_main.largest  # type: ignore
 
     assert_transition_coupled_allowed(
-        _ground_main, _excited_main, ΔmF_allowed=0 if pol_main[2] != 0 else 1,
+        _ground_main, _excited_main, ΔmF_allowed=0 if pol_main[2] != 0 else 1
     )
 
     couplings = []
