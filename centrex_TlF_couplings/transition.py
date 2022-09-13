@@ -146,7 +146,7 @@ class OpticalTransition:
 
 
 def generate_transition_selectors(
-    transitions: Sequence[Union[OpticalTransition, MicrowaveTransition]],
+    transitions: Sequence[Sequence[Union[OpticalTransition, MicrowaveTransition]]],
     polarizations: Sequence[Sequence[Polarization]],
     ground_mains: Optional[Sequence[states.State]] = None,
     excited_mains: Optional[Sequence[states.State]] = None,
