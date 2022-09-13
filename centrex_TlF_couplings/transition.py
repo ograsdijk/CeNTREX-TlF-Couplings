@@ -6,6 +6,7 @@ import numpy as np
 import numpy.typing as npt
 import sympy as smp
 from centrex_TlF_hamiltonian import states
+from centrex_TlF_hamiltonian.states import ElectronicState
 
 from .polarization import Polarization
 
@@ -50,8 +51,8 @@ class OpticalTransitionType(Enum):
 class MicrowaveTransition:
     J_ground: int
     J_excited: int
-    electronic_ground: states.ElectronicState = states.ElectronicState.X
-    electronic_excited: states.ElectronicState = states.ElectronicState.X
+    electronic_ground: ElectronicState = ElectronicState.X
+    electronic_excited: ElectronicState = ElectronicState.X
 
     def __repr__(self) -> str:
         return f"MicrowaveTransition({self.name})"
@@ -95,8 +96,8 @@ class OpticalTransition:
     J_ground: int
     F1: float
     F: int
-    electronic_ground: states.ElectronicState = states.ElectronicState.X
-    electronic_excited: states.ElectronicState = states.ElectronicState.B
+    electronic_ground: ElectronicState = ElectronicState.X
+    electronic_excited: ElectronicState = ElectronicState.B
 
     def __repr__(self) -> str:
         return f"OpticalTransition({self.name})"
