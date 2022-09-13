@@ -25,6 +25,9 @@ def check_transition_coupled_allowed(
     Returns:
         tuple: (allowed boolean, error message)
     """
+    assert state1.P is not None, "parity is required to be set for state1"
+    assert state2.P is not None, "parity is required to be set for state2"
+
     ΔF = int(state2.F - state1.F)
     ΔmF = np.abs(int(state2.mF - state1.mF))
     ΔP = int(state2.P - state1.P)
