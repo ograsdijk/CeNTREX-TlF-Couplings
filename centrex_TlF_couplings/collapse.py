@@ -1,5 +1,5 @@
 import copy
-from typing import Sequence
+from typing import Sequence, Optional, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -18,7 +18,9 @@ def collapse_matrices(
     excited_states: Sequence[states.State],
     gamma: float = 1,
     tol: float = 1e-4,
-    qn_compact=None,
+    qn_compact: Optional[
+        Union[states.QuantumSelector, Sequence[states.QuantumSelector]]
+    ] = None,
 ) -> npt.NDArray[np.float_]:
     """
     Function that generates the collapse matrix for given ground and excited states
