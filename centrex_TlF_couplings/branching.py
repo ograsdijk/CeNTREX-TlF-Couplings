@@ -1,12 +1,13 @@
-from typing import Sequence
+from typing import Any, List, Optional, Sequence
 
 import numpy as np
 import numpy.typing as npt
+import pandas as pd
 from centrex_TlF_hamiltonian import states
 
 from .matrix_elements import generate_ED_ME_mixed_state
 
-__all__ = ["calculate_br"]
+__all__ = ["calculate_br", "generate_br_dataframe"]
 
 
 def calculate_br(
@@ -26,3 +27,105 @@ def calculate_br(
     # Calculate branching ratios
     BRs = np.abs(MEs) ** 2 / (np.sum(np.abs(MEs) ** 2)).astype(np.float_)
     return BRs
+
+
+def generate_br_dataframe(
+    ground_states: Sequence[states.State],
+    excited_states: Sequence[states.State],
+    group_ground: Optional[str] = None,
+    group_excited: bool = True,
+    remove_zeros: bool = True,
+):
+    """
+    Generate a pandas DataFrame of branching ratios given a set of ground states and
+    excited states.
+
+    Args:
+        ground_states (Sequence[states.State]): superpositions of ground state
+                                                CoupledBasisStates
+        excited_states (Sequence[states.State]): superpositions of excited state
+                                                CoupledBasisStates
+        group_ground (Optional[str], optional): Group ground states with "J" or "mF".
+                                                Defaults to None.
+        group_excited (bool, optional): Group all excited states in a single column.
+                                        Defaults to True.
+        remove_zeros (bool, optional): Remove states with zero branching. Defaults to
+                                        True.
+
+    Raises:
+        AssertionError: _description_
+
+    Returns:
+        _type_: _description_
+    """
+    br: List[npt.NDArray[np.float_]] = []
+    for es in excited_states:
+        br.append(calculate_br(es, ground_states))
+
+    brs = np.sum(br, axis=0)
+
+    if group_ground is not None:
+        if group_ground == "J":
+            J_unique = np.unique([s.largest.J for s in ground_states])
+            indices_group = [
+                states.QuantumSelector(
+                    J=Ji, electronic=states.ElectronicState.X
+                ).get_indices(ground_states)
+                for Ji in J_unique
+            ]
+            data = {"states": [f"|X, J = {Ji}>" for Ji in J_unique]}
+        elif group_ground == "mF":
+            mF_selectors = np.unique(
+                [(s.largest.J, s.largest.F1, s.largest.F) for s in ground_states],  # type: ignore
+                axis=0,
+            )
+            indices_group = [
+                states.QuantumSelector(
+                    J=J, F1=F1, F=F, electronic=states.ElectronicState.X
+                ).get_indices(ground_states)
+                for J, F1, F in mF_selectors
+            ]
+            data = {
+                "states": [
+                    [ground_states[idx] for idx in ind][0].largest.state_string_custom(
+                        ["electronic", "J", "F1", "F"]
+                    )
+                    for ind in indices_group
+                ]
+            }
+        else:
+            raise AssertionError("group_ground not equal to either J or mF")
+        br = [np.array([bri[ind].sum() for ind in indices_group]) for bri in br]
+        brs = np.sum(br, axis=0)
+        if remove_zeros:
+            m = brs != 0
+        else:
+            m = np.ones(len(brs), dtype=bool)
+        data["states"] = np.asarray(data["states"])[m]
+    else:
+        if remove_zeros:
+            m = brs != 0
+        else:
+            m = np.ones(len(brs), dtype=bool)
+        data = {
+            "states": [
+                qn.largest.state_string_custom(["electronic", "J", "F1", "F", "mF"])  # type: ignore
+                for qn in [s for ids, s in enumerate(ground_states) if m[ids]]
+            ],
+        }
+
+    br_dataframe = pd.DataFrame(data=data)
+    if group_excited:
+        br_dataframe[
+            excited_states[0].largest.state_string_custom(  # type: ignore
+                ["electronic", "J", "F1", "F"]
+            )
+        ] = brs[m] / np.sum(brs)
+    else:
+        for idb, brv in enumerate(br):
+            br_dataframe[
+                excited_states[idb].largest.state_string_custom(  # type: ignore
+                    ["electronic", "J", "F1", "F", "mF"]
+                )
+            ] = np.asarray(brv)[m] / np.sum(brs)
+    return br_dataframe.set_index("states")

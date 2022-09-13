@@ -9,6 +9,7 @@ license = "MIT"
 python = ">=3.8, <3.11"
 numpy = "^1.20"
 centrex_TlF_hamiltonian = "^0.1"
+pandas = "^1.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
