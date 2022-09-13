@@ -83,6 +83,15 @@ class CouplingFields:
     excited_states: Sequence[states.State]
     fields: Sequence[CouplingField]
 
+    def __repr__(self):
+        gs = self.ground_main.largest
+        es = self.excited_main.largest
+        return (
+            f"CouplingFields(ground_main={gs.state_string_custom(['electronic', 'J', 'F1', 'F', 'mF', 'P', 'Ω'])}, "
+            f"excited_main={es.state_string_custom(['electronic', 'J', 'F1', 'F', 'mF', 'P', 'Ω'])}, "
+            f"main_coupling={self.main_coupling:.2e}"
+        )
+
 
 def generate_coupling_field(
     ground_main_approx: states.State,
