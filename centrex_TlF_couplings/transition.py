@@ -89,7 +89,6 @@ class MicrowaveTransition:
             J=self.J_excited, electronic=self.electronic_excited, Ω=self.Ω_excited
         )
 
-
 @dataclass
 class OpticalTransition:
     t: OpticalTransitionType
@@ -143,6 +142,14 @@ class OpticalTransition:
             P=self.P_excited,
             Ω=self.Ω_excited,
         )
+
+    @property
+    def ground_states(self) -> Sequence[states.CoupledBasisState]:
+        return states.generate_coupled_states_X(self.ground_states)
+
+    @property
+    def excited_states(self) -> Sequence[states.CoupledBasisState]:
+        return states.generate_coupled_states_B(self.qn_select_excited)
 
 
 def generate_transition_selectors(
