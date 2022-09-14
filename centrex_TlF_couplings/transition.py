@@ -149,7 +149,7 @@ class OpticalTransition:
 
     @property
     def ground_states(self) -> Sequence[states.CoupledBasisState]:
-        return states.generate_coupled_states_X(self.ground_states)
+        return states.generate_coupled_states_X(self.qn_select_ground)
 
     @property
     def excited_states(self) -> Sequence[states.CoupledBasisState]:
