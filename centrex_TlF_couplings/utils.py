@@ -9,15 +9,38 @@ __all__: List[str] = []
 
 
 def check_transition_coupled_allowed(
-    state1: states.CoupledBasisState,
-    state2: states.CoupledBasisState,
+    ground: states.CoupledBasisState, excited: states.CoupledBasisState
+):
+    """
+    Check whether the transition between the two states is allowed based on the quantum
+    numbers
+
+    Args:
+        ground (states.CoupledBasisState): ground CoupledBasisState
+        excited (states.CoupledBasisState): excited CoupledBasisState
+    """
+    assert ground.P is not None, "parity is required to be set for ground"
+    assert excited.P is not None, "parity is required to be set for excited"
+
+    ΔF = int(excited.F - ground.F)
+    ΔP = int(excited.P - ground.P)
+
+    flag_ΔP = abs(ΔP) != 2
+    flag_ΔF = abs(ΔF) > 1
+
+    return not (flag_ΔP | flag_ΔF)
+
+
+def check_transition_coupled_allowed_polarization(
+    ground_state: states.CoupledBasisState,
+    excited_state: states.CoupledBasisState,
     ΔmF_allowed: int,
     return_err: float = True,
 ) -> Union[bool, Tuple[bool, str]]:
     """Check whether the transition is allowed based on the quantum numbers
 
     Args:
-        state1 (CoupledBasisState): ground CoupledBasisState
+        ground_state (CoupledBasisState): ground CoupledBasisState
         state2 (CoupledBasisState): excited CoupledBasisState
         ΔmF_allowed (int): allowed ΔmF for the transition
         return_err (boolean): boolean flag for returning the error message
@@ -25,17 +48,17 @@ def check_transition_coupled_allowed(
     Returns:
         tuple: (allowed boolean, error message)
     """
-    assert state1.P is not None, "parity is required to be set for state1"
-    assert state2.P is not None, "parity is required to be set for state2"
+    assert ground_state.P is not None, "parity is required to be set for ground_state"
+    assert excited_state.P is not None, "parity is required to be set for excited_state"
 
-    ΔF = int(state2.F - state1.F)
-    ΔmF = np.abs(int(state2.mF - state1.mF))
-    ΔP = int(state2.P - state1.P)
+    ΔF = int(excited_state.F - ground_state.F)
+    ΔmF = np.abs(int(excited_state.mF - ground_state.mF))
+    ΔP = int(excited_state.P - ground_state.P)
 
     flag_ΔP = abs(ΔP) != 2
     flag_ΔF = abs(ΔF) > 1
     flag_ΔmF = ΔmF != ΔmF_allowed
-    flag_ΔFΔmF = (not flag_ΔmF) & ((ΔF == 0) & (ΔmF == 0) & (state1.mF == 0))
+    flag_ΔFΔmF = (not flag_ΔmF) & ((ΔF == 0) & (ΔmF == 0) & (ground_state.mF == 0))
 
     errors = ""
     if flag_ΔP:
@@ -64,19 +87,21 @@ def check_transition_coupled_allowed(
 
 
 def assert_transition_coupled_allowed(
-    state1: states.CoupledBasisState, state2: states.CoupledBasisState, ΔmF_allowed: int
+    ground_state: states.CoupledBasisState, excited_state: states.CoupledBasisState, ΔmF_allowed: int
 ) -> bool:
     """Check whether the transition is allowed based on the quantum numbers.
     Raises an AssertionError if the transition is not allowed.
 
     Args:
-        state1 (CoupledBasisState): ground CoupledBasisState
-        state2 (CoupledBasisState): excited CoupledBasisState
+        ground_state (CoupledBasisState): ground CoupledBasisState
+        excited_state (CoupledBasisState): excited CoupledBasisState
 
     Returns:
         tuple: allowed boolean
     """
-    ret = check_transition_coupled_allowed(state1, state2, ΔmF_allowed, return_err=True)
+    ret = check_transition_coupled_allowed_polarization(
+        ground_state, excited_state, ΔmF_allowed, return_err=True
+    )
     if isinstance(ret, tuple):
         allowed, errors = ret
         assert allowed, errors
@@ -107,7 +132,7 @@ def select_main_states(
         exc_basisstate: CoupledBasisState = exc.largest  # type: ignore
         for idg, gnd in enumerate(ground_states):
             gnd_basisstate: CoupledBasisState = gnd.largest  # type: ignore
-            if check_transition_coupled_allowed(
+            if check_transition_coupled_allowed_polarization(
                 gnd_basisstate, exc_basisstate, ΔmF, return_err=False
             ):
                 allowed_transitions.append((idg, ide, exc_basisstate.mF))

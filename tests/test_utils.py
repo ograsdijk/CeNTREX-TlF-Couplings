@@ -26,27 +26,27 @@ def test_check_transition_coupled_allowed():
         P=1,
         electronic_state=states.ElectronicState.B,
     )
-    allowed = couplings.utils.check_transition_coupled_allowed(
+    allowed = couplings.utils.check_transition_coupled_allowed_polarization(
         ground_state, excited_state, ΔmF_allowed=0, return_err=False
     )
     if isinstance(allowed, bool):
         assert not allowed
 
     excited_state.mF = -1
-    allowed = couplings.utils.check_transition_coupled_allowed(
+    allowed = couplings.utils.check_transition_coupled_allowed_polarization(
         ground_state, excited_state, ΔmF_allowed=0, return_err=False
     )
     if isinstance(allowed, bool):
         assert not allowed
 
-    allowed = couplings.utils.check_transition_coupled_allowed(
+    allowed = couplings.utils.check_transition_coupled_allowed_polarization(
         ground_state, excited_state, ΔmF_allowed=-1, return_err=False
     )
     if isinstance(allowed, bool):
         assert allowed
 
     excited_state.mF = 1
-    allowed = couplings.utils.check_transition_coupled_allowed(
+    allowed = couplings.utils.check_transition_coupled_allowed_polarization(
         ground_state, excited_state, ΔmF_allowed=1, return_err=False
     )
     if isinstance(allowed, bool):
