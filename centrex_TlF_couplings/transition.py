@@ -8,6 +8,8 @@ import sympy as smp
 from centrex_TlF_hamiltonian import states
 from centrex_TlF_hamiltonian.states import ElectronicState
 
+from centrex_TlF_couplings.utils import check_transition_coupled_allowed
+
 from .polarization import Polarization
 
 __all__ = [
@@ -16,6 +18,7 @@ __all__ = [
     "MicrowaveTransition",
     "OpticalTransition",
     "generate_transition_selectors",
+    "get_possible_optical_transitions",
 ]
 
 
@@ -88,6 +91,7 @@ class MicrowaveTransition:
         return states.QuantumSelector(
             J=self.J_excited, electronic=self.electronic_excited, Ω=self.Ω_excited
         )
+
 
 @dataclass
 class OpticalTransition:
@@ -213,3 +217,34 @@ def generate_transition_selectors(
             )
         )
     return transition_selectors
+
+
+def get_possible_optical_transitions(
+    ground_state: states.CoupledBasisState,
+    transition_types: Optional[Sequence[OpticalTransitionType]] = None,
+):
+    J = ground_state.J
+    F1 = ground_state.F1
+    F = ground_state.F
+    I1 = ground_state.I1
+    I2 = ground_state.I2
+
+    if transition_types is None:
+        transition_types = [t for t in OpticalTransitionType]
+
+    transitions = []
+    for transition_type in transition_types:
+        ΔJ = transition_type.value
+        J_excited = J + ΔJ
+        _transitions = [
+            OpticalTransition(transition_type, J, F1, F)
+            for F1 in np.arange(np.abs(J_excited - I1), J_excited + I1 + 1)
+            for F in np.arange(np.abs(F1 - I2), F1 + I2 + 1, dtype=int)
+        ]
+        _transitions = [
+            t
+            for t in _transitions
+            if check_transition_coupled_allowed(ground_state, t.excited_states[0])
+        ]
+        transitions.append(_transitions)
+    return transitions
