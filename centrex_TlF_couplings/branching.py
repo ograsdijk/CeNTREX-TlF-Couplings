@@ -132,6 +132,7 @@ def generate_br_dataframe(
             for Fi in F_unique
         ]
         indices_group = [qs.get_indices(excited_states) for qs in quantum_selectors]
+        indices_group = [ind for ind in indices_group if len(ind) > 0]
         for ind in indices_group:
             s = excited_states[ind[0]].largest
             bri = np.sum([br[i] for i in ind], axis=0)
