@@ -76,7 +76,9 @@ def generate_br_dataframe(
             data = {"states": [f"|X, J = {Ji}>" for Ji in J_unique]}
         elif group_ground == "mF":
             mF_selectors = np.unique(
-                [(s.largest.J, s.largest.F1, s.largest.F) for s in ground_states],  # type: ignore
+                [
+                    (s.largest.J, s.largest.F1, s.largest.F) for s in ground_states
+                ],  # type: ignore
                 axis=0,
             )
             indices_group = [
@@ -109,18 +111,36 @@ def generate_br_dataframe(
             m = np.ones(len(brs), dtype=bool)
         data = {
             "states": [
-                qn.largest.state_string_custom(["electronic", "J", "F1", "F", "mF"])  # type: ignore
+                qn.largest.state_string_custom(
+                    ["electronic", "J", "F1", "F", "mF"]
+                )  # type: ignore
                 for qn in [s for ids, s in enumerate(ground_states) if m[ids]]
-            ],
+            ]
         }
 
     br_dataframe = pd.DataFrame(data=data)
     if group_excited:
-        br_dataframe[
-            excited_states[0].largest.state_string_custom(  # type: ignore
-                ["electronic", "J", "F1", "F"]
+        J_unique = np.unique([s.largest.J for s in excited_states])
+        F1_unique = np.unique([s.largest.F1 for s in excited_states])
+        F_unique = np.unique([s.largest.F for s in excited_states])
+        quantum_selectors = [
+            states.QuantumSelector(
+                J=Ji, F1=F1i, F=Fi, electronic=states.ElectronicState.B
             )
-        ] = brs[m] / np.sum(brs)
+            for Ji in J_unique
+            for F1i in F1_unique
+            for Fi in F_unique
+        ]
+        indices_group = [qs.get_indices(excited_states) for qs in quantum_selectors]
+        for ind in indices_group:
+            s = excited_states[ind[0]].largest
+            bri = np.sum([br[i] for i in ind], axis=0)
+            bri /= np.sum(bri)
+            br_dataframe[
+                s.state_string_custom(  # type: ignore
+                    ["electronic", "J", "F1", "F"]
+                )
+            ] = bri[m]
     else:
         for idb, brv in enumerate(br):
             br_dataframe[
