@@ -13,7 +13,7 @@ __all__ = ["calculate_br", "generate_br_dataframe"]
 def calculate_br(
     excited_state: states.State,
     ground_states: Sequence[states.State],
-    tol: float = 1e-2,
+    tol: float = 1e-3,
 ) -> npt.NDArray[np.float_]:
     # matrix elements between the excited state and the ground states
     MEs = np.zeros((len(ground_states)), dtype=np.complex_)
@@ -35,6 +35,7 @@ def generate_br_dataframe(
     group_ground: Optional[str] = None,
     group_excited: bool = True,
     remove_zeros: bool = True,
+    tolerance: float = 1e-3
 ):
     """
     Generate a pandas DataFrame of branching ratios given a set of ground states and
@@ -60,7 +61,7 @@ def generate_br_dataframe(
     """
     br: List[npt.NDArray[np.float_]] = []
     for es in excited_states:
-        br.append(calculate_br(es, ground_states))
+        br.append(calculate_br(es, ground_states, tolerance))
 
     brs = np.sum(br, axis=0)
 
