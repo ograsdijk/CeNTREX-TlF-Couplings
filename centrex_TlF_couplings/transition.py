@@ -4,11 +4,13 @@ from typing import List, Optional, Sequence, Union
 import numpy as np
 import numpy.typing as npt
 import sympy as smp
-from centrex_TlF_hamiltonian import states
-from centrex_TlF_hamiltonian.transitions import MicrowaveTransition, OpticalTransition
-
-from centrex_TlF_couplings.utils import check_transition_coupled_allowed
-
+from centrex_tlf_hamiltonian import states
+from centrex_tlf_hamiltonian.transitions import (
+    MicrowaveTransition,
+    OpticalTransition,
+    OpticalTransitionType
+)
+from centrex_tlf_couplings.utils import check_transition_coupled_allowed
 from .polarization import Polarization
 
 __all__ = [

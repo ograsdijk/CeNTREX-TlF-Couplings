@@ -1,11 +1,11 @@
 import numpy as np
-from centrex_TlF_hamiltonian import states
-import centrex_TlF_couplings as couplings
+from centrex_tlf_hamiltonian import states
+import centrex_tlf_couplings as couplings
 
 
 def test_calculate_br():
     excited_state = states.CoupledBasisState(
-        J=1, F1=1 / 2, F=1, mF=0, I1=1 / 2, I2=1 / 2, Omega=1, P=1
+        J=1, F1=1 / 2, F=1, mF=0, I1=1 / 2, I2=1 / 2, Omega=1, P=1, electronic_state=states.ElectronicState.B
     )
     qn_select = states.QuantumSelector(J=1)
     ground_states = states.generate_coupled_states_X(qn_select)

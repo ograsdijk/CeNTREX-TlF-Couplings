@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "CeNTREX-TlF-couplings"
-version = "0.1.0"
+version = "0.2.0"
 description = "Generate couplings and coupling matrices for the TlF X and B states"
 authors = ["olivier grasdijk <jgrasdijk@anl.gov>"]
 license = "MIT"
@@ -8,8 +8,8 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = ">=3.8, <3.11"
 numpy = "^1.20"
-centrex_TlF_hamiltonian = "^0.1"
 pandas = "^1.4"
+centrex_tlf_hamiltonian = "^0.2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"

@@ -1,6 +1,6 @@
 import numpy as np
-from centrex_TlF_hamiltonian import states
-import centrex_TlF_couplings as couplings
+from centrex_tlf_hamiltonian import states
+import centrex_tlf_couplings as couplings
 
 
 def test_check_transition_coupled_allowed():
@@ -42,12 +42,20 @@ def test_check_transition_coupled_allowed():
     allowed = couplings.utils.check_transition_coupled_allowed_polarization(
         ground_state, excited_state, ΔmF_allowed=-1, return_err=False
     )
+    print(allowed)
     if isinstance(allowed, bool):
         assert allowed
 
     excited_state.mF = 1
     allowed = couplings.utils.check_transition_coupled_allowed_polarization(
         ground_state, excited_state, ΔmF_allowed=1, return_err=False
+    )
+    if isinstance(allowed, bool):
+        assert allowed
+
+    excited_state.mF = 1
+    allowed = couplings.utils.check_transition_coupled_allowed_polarization(
+        ground_state, excited_state, ΔmF_allowed=-1, return_err=False, ΔmF_absolute=True
     )
     if isinstance(allowed, bool):
         assert allowed

@@ -3,7 +3,7 @@ from typing import Sequence, Optional, Union
 
 import numpy as np
 import numpy.typing as npt
-from centrex_TlF_hamiltonian import states
+from centrex_tlf_hamiltonian import states
 
 from .utils_compact import compact_C_array_indices
 

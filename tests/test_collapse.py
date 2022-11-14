@@ -1,6 +1,6 @@
 import numpy as np
-from centrex_TlF_hamiltonian import states
-import centrex_TlF_couplings as couplings
+from centrex_tlf_hamiltonian import states
+import centrex_tlf_couplings as couplings
 from pathlib import Path
 
 

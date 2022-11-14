@@ -3,7 +3,7 @@ from typing import Any, List, Optional, Sequence
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
-from centrex_TlF_hamiltonian import states
+from centrex_tlf_hamiltonian import states
 
 from .matrix_elements import generate_ED_ME_mixed_state
 
@@ -35,7 +35,7 @@ def generate_br_dataframe(
     group_ground: Optional[str] = None,
     group_excited: bool = True,
     remove_zeros: bool = True,
-    tolerance: float = 1e-3
+    tolerance: float = 1e-3,
 ):
     """
     Generate a pandas DataFrame of branching ratios given a set of ground states and

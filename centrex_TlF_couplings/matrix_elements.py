@@ -3,7 +3,7 @@ from typing import Tuple
 
 import numpy as np
 import numpy.typing as npt
-from centrex_TlF_hamiltonian import hamiltonian, states
+from centrex_tlf_hamiltonian import hamiltonian, states
 
 __all__ = ["generate_ED_ME_mixed_state", "ED_ME_coupled"]
 

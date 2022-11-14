@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from typing import List, Sequence, Union
-from centrex_TlF_hamiltonian.states.states import CoupledBasisState
+from centrex_tlf_hamiltonian.states.states import CoupledBasisState
 
 import numpy as np
 import numpy.typing as npt
-from centrex_TlF_hamiltonian import states
+from centrex_tlf_hamiltonian import states
 
 from .matrix_elements import generate_ED_ME_mixed_state
 from .utils import assert_transition_coupled_allowed, select_main_states

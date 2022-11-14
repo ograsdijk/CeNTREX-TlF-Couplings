@@ -1,6 +1,6 @@
 import numpy as np
-from centrex_TlF_hamiltonian import states
-import centrex_TlF_couplings as couplings
+from centrex_tlf_hamiltonian import states
+import centrex_tlf_couplings as couplings
 from pathlib import Path
 
 
@@ -8,7 +8,9 @@ def test_generate_coupling_matrix():
     qn_select = states.QuantumSelector(J=1)
     ground_states = states.generate_coupled_states_X(qn_select)
 
-    qn_select = states.QuantumSelector(J=1, F1=1 / 2, F=1, P=1, Ω=1)
+    qn_select = states.QuantumSelector(
+        J=1, F1=1 / 2, F=1, P=1, Ω=1, electronic=states.ElectronicState.B
+    )
     excited_states = states.generate_coupled_states_B(qn_select)
 
     QN = list(1 * np.append(ground_states, excited_states))
@@ -24,14 +26,17 @@ def test_generate_coupling_matrix():
     )
 
     coupling_matrix_test = np.load(Path(__file__).parent / "coupling_matrix_test.npy")
-    assert np.allclose(coupling_matrix, coupling_matrix_test)
+
+    assert np.allclose(coupling_matrix, -coupling_matrix_test)
 
 
 def test_generate_coupling_field_automatic():
     qn_select = states.QuantumSelector(J=1)
     ground_states = states.generate_coupled_states_X(qn_select)
 
-    qn_select = states.QuantumSelector(J=1, F1=1 / 2, F=1, P=1, Ω=1)
+    qn_select = states.QuantumSelector(
+        J=1, F1=1 / 2, F=1, P=1, Ω=1, electronic=states.ElectronicState.B
+    )
     excited_states = states.generate_coupled_states_B(qn_select)
 
     QN = list(1 * np.append(ground_states, excited_states))

@@ -4,7 +4,7 @@ Includes code for generating branching ratios, electric dipole coupling elements
 
 ## Dependencies
 * `numpy`
-* `centrex_TlF_hamiltonian`
+* `centrex_tlf_hamiltonian`
 
 ## Installation
 `python -m pip install .`  
@@ -14,8 +14,8 @@ where `.` is the path to the directory. To install directly from `Github` use:
 ## Generating branching ratios
 The code below generates branching ratios from `|J'=1, F1'=1/2, mF=0>` to all states in the `J=1` manifold.
 ```Python
-from centrex_TlF_hamiltonian import states
-import centrex_TlF_couplings as couplings
+from centrex_tlf_hamiltonian import states
+import centrex_tlf_couplings as couplings
 
 excited_state = states.CoupledBasisState(
     J=1, F1=1 / 2, F=1, mF=0, I1=1 / 2, I2=1 / 2, Omega=1, P=1
@@ -37,8 +37,8 @@ The code below generates the coupling fields for the `J=1` manifold to the `J'=1
   * `field`: coupling field in the `ground_states` + `excited_states` basis
 
 ```Python
-from centrex_TlF_hamiltonian import states
-import centrex_TlF_couplings as couplings
+from centrex_tlf_hamiltonian import states
+import centrex_tlf_couplings as couplings
 
 qn_select = states.QuantumSelector(J=1)
 ground_states = states.generate_coupled_states_X(qn_select)

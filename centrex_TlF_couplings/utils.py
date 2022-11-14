@@ -1,9 +1,9 @@
 from typing import List, Sequence, Tuple, Union
-from centrex_TlF_hamiltonian.states.states import CoupledBasisState
+from centrex_tlf_hamiltonian.states.states import CoupledBasisState
 
 import numpy as np
 import numpy.typing as npt
-from centrex_TlF_hamiltonian import states
+from centrex_tlf_hamiltonian import states
 
 __all__: List[str] = []
 
@@ -36,6 +36,7 @@ def check_transition_coupled_allowed_polarization(
     excited_state: states.CoupledBasisState,
     ΔmF_allowed: int,
     return_err: float = True,
+    ΔmF_absolute = False
 ) -> Union[bool, Tuple[bool, str]]:
     """Check whether the transition is allowed based on the quantum numbers
 
@@ -52,7 +53,10 @@ def check_transition_coupled_allowed_polarization(
     assert excited_state.P is not None, "parity is required to be set for excited_state"
 
     ΔF = int(excited_state.F - ground_state.F)
-    ΔmF = np.abs(int(excited_state.mF - ground_state.mF))
+    ΔmF = int(excited_state.mF - ground_state.mF)
+    if ΔmF_absolute:
+        ΔmF = np.abs(ΔmF)
+        ΔmF_allowed = np.abs(ΔmF_allowed)
     ΔP = int(excited_state.P - ground_state.P)
 
     flag_ΔP = abs(ΔP) != 2
@@ -87,7 +91,9 @@ def check_transition_coupled_allowed_polarization(
 
 
 def assert_transition_coupled_allowed(
-    ground_state: states.CoupledBasisState, excited_state: states.CoupledBasisState, ΔmF_allowed: int
+    ground_state: states.CoupledBasisState,
+    excited_state: states.CoupledBasisState,
+    ΔmF_allowed: int,
 ) -> bool:
     """Check whether the transition is allowed based on the quantum numbers.
     Raises an AssertionError if the transition is not allowed.
