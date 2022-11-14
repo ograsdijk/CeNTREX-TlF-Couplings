@@ -1,12 +1,11 @@
 from dataclasses import dataclass
-from enum import Enum
 from typing import List, Optional, Sequence, Union
 
 import numpy as np
 import numpy.typing as npt
 import sympy as smp
 from centrex_TlF_hamiltonian import states
-from centrex_TlF_hamiltonian.states import ElectronicState
+from centrex_TlF_hamiltonian.transitions import MicrowaveTransition, OpticalTransition
 
 from centrex_TlF_couplings.utils import check_transition_coupled_allowed
 
@@ -14,9 +13,6 @@ from .polarization import Polarization
 
 __all__ = [
     "TransitionSelector",
-    "OpticalTransitionType",
-    "MicrowaveTransition",
-    "OpticalTransition",
     "generate_transition_selectors",
     "get_possible_optical_transitions",
 ]
@@ -42,118 +38,6 @@ class TransitionSelector:
             return f"TransitionSelector(J={J_g} -> J={J_e})"
         else:
             return f"TransitionSelector({self.description})"
-
-
-class OpticalTransitionType(Enum):
-    P = -1
-    Q = 0
-    R = +1
-
-
-@dataclass
-class MicrowaveTransition:
-    J_ground: int
-    J_excited: int
-    electronic_ground: ElectronicState = ElectronicState.X
-    electronic_excited: ElectronicState = ElectronicState.X
-
-    def __repr__(self) -> str:
-        return f"MicrowaveTransition({self.name})"
-
-    @property
-    def name(self) -> str:
-        return f"J={self.J_ground} -> J={self.J_excited}"
-
-    @property
-    def Ω_ground(self) -> int:
-        return 0
-
-    @property
-    def Ω_excited(self) -> int:
-        return 0
-
-    @property
-    def P_ground(self) -> int:
-        return (-1) ** self.J_ground
-
-    @property
-    def P_excited(self) -> int:
-        return (-1) ** self.J_excited
-
-    @property
-    def qn_select_ground(self) -> states.QuantumSelector:
-        return states.QuantumSelector(
-            J=self.J_ground, electronic=self.electronic_ground, Ω=self.Ω_ground
-        )
-
-    @property
-    def qn_select_excited(self) -> states.QuantumSelector:
-        return states.QuantumSelector(
-            J=self.J_excited, electronic=self.electronic_excited, Ω=self.Ω_excited
-        )
-
-
-@dataclass
-class OpticalTransition:
-    t: OpticalTransitionType
-    J_ground: int
-    F1: float
-    F: int
-    electronic_ground: ElectronicState = ElectronicState.X
-    electronic_excited: ElectronicState = ElectronicState.B
-
-    def __repr__(self) -> str:
-        return f"OpticalTransition({self.name})"
-
-    @property
-    def name(self) -> str:
-        F1 = smp.S(str(self.F1), rational=True)
-        return f"{self.t.name}({self.J_ground}) F1'={F1} F'={self.F}"
-
-    @property
-    def J_excited(self) -> int:
-        return self.J_ground + self.t.value
-
-    @property
-    def P_excited(self) -> int:
-        return self.P_ground * -1
-
-    @property
-    def P_ground(self) -> int:
-        return (-1) ** self.J_ground
-
-    @property
-    def Ω_excited(self) -> int:
-        return 1
-
-    @property
-    def Ω_ground(self) -> int:
-        return 0
-
-    @property
-    def qn_select_ground(self) -> states.QuantumSelector:
-        return states.QuantumSelector(
-            J=self.J_ground, electronic=self.electronic_ground, Ω=self.Ω_ground
-        )
-
-    @property
-    def qn_select_excited(self) -> states.QuantumSelector:
-        return states.QuantumSelector(
-            J=self.J_excited,
-            F1=self.F1,
-            F=self.F,
-            electronic=self.electronic_excited,
-            P=self.P_excited,
-            Ω=self.Ω_excited,
-        )
-
-    @property
-    def ground_states(self) -> Sequence[states.CoupledBasisState]:
-        return states.generate_coupled_states_X(self.qn_select_ground)
-
-    @property
-    def excited_states(self) -> Sequence[states.CoupledBasisState]:
-        return states.generate_coupled_states_B(self.qn_select_excited)
 
 
 def generate_transition_selectors(
