@@ -4,9 +4,6 @@ version = "0.2.0"
 description = "Generate couplings and coupling matrices for the TlF X and B states"
 authors = ["olivier grasdijk <jgrasdijk@anl.gov>"]
 license = "MIT"
-packages = [
-    { include = "centrex_tlf_couplings" },
-]
 
 [tool.poetry.dependencies]
 python = ">=3.8, <3.11"
