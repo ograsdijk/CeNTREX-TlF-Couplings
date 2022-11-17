@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "CeNTREX-TlF-couplings"
+name = "centrex_tlf_couplings"
 version = "0.2.0"
 description = "Generate couplings and coupling matrices for the TlF X and B states"
 authors = ["olivier grasdijk <jgrasdijk@anl.gov>"]
