@@ -36,7 +36,7 @@ def generate_br_dataframe(
     group_excited: bool = True,
     remove_zeros: bool = True,
     tolerance: float = 1e-3,
-):
+) -> pd.DataFrame:
     """
     Generate a pandas DataFrame of branching ratios given a set of ground states and
     excited states.
