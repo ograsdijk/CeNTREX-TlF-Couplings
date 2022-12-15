@@ -36,7 +36,7 @@ def check_transition_coupled_allowed_polarization(
     excited_state: states.CoupledBasisState,
     ΔmF_allowed: int,
     return_err: float = True,
-    ΔmF_absolute = False
+    ΔmF_absolute=False,
 ) -> Union[bool, Tuple[bool, str]]:
     """Check whether the transition is allowed based on the quantum numbers
 
@@ -134,6 +134,7 @@ def select_main_states(
     ΔmF = 0 if polarization[2] != 0 else 1
 
     allowed_transitions = []
+    indices_gnd_mF0 = []
     for ide, exc in enumerate(excited_states):
         exc_basisstate: CoupledBasisState = exc.largest  # type: ignore
         for idg, gnd in enumerate(ground_states):
@@ -142,12 +143,19 @@ def select_main_states(
                 gnd_basisstate, exc_basisstate, ΔmF, return_err=False
             ):
                 allowed_transitions.append((idg, ide, exc_basisstate.mF))
+                if gnd_basisstate.mF == 0:
+                    indices_gnd_mF0.append((idg, ide, gnd_basisstate.mF))
 
     assert (
         len(allowed_transitions) > 0
     ), "none of the supplied ground and excited states have allowed transitions"
 
-    excited_state = excited_states[allowed_transitions[0][1]]
-    ground_state = ground_states[allowed_transitions[0][0]]
+    if len(indices_gnd_mF0) > 0:
+        excited_state = excited_states[indices_gnd_mF0[-1][1]]
+        ground_state = ground_states[indices_gnd_mF0[-1][0]]
+    else:
+        idt = len(allowed_transitions) // 2
+        excited_state = excited_states[allowed_transitions[idt][1]]
+        ground_state = ground_states[allowed_transitions[idt][0]]
 
     return ground_state, excited_state
