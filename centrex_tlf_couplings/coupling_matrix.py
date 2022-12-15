@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 from typing import List, Sequence, Union
-from centrex_tlf_hamiltonian.states.states import CoupledBasisState
 
 import numpy as np
 import numpy.typing as npt
+import pandas as pd
 from centrex_tlf_hamiltonian import states
+from centrex_tlf_hamiltonian.states.states import CoupledBasisState
 
 from .matrix_elements import generate_ED_ME_mixed_state
 from .utils import assert_transition_coupled_allowed, select_main_states
@@ -15,6 +16,7 @@ __all__ = [
     "generate_coupling_field_automatic",
     "CouplingFields",
     "CouplingField",
+    "generate_coupling_dataframe",
 ]
 
 
@@ -91,6 +93,49 @@ class CouplingFields:
             f"excited_main={es.state_string_custom(['electronic', 'J', 'F1', 'F', 'mF', 'P', 'Ω'])}, "
             f"main_coupling={self.main_coupling:.2e}"
         )
+
+
+def _generate_coupling_dataframe(
+    field: CouplingField, states_list: Sequence[states.State]
+) -> pd.DataFrame:
+    indices = np.nonzero(np.triu(field.field))
+    ground_states = []
+    excited_states = []
+    couplings = []
+    for idx, idy in zip(*indices):
+        gs = states_list[idx].largest.state_string_custom(
+            ["electronic", "J", "F1", "F", "mF"]
+        )
+        es = states_list[idy].largest.state_string_custom(
+            ["electronic", "J", "F1", "F", "mF"]
+        )
+        ground_states.append(gs)
+        excited_states.append(es)
+        couplings.append(field.field[idx, idy])
+
+    data = {"ground": ground_states, "excited": excited_states, "couplings": couplings}
+    return pd.DataFrame(data)
+
+
+def generate_coupling_dataframe(
+    fields: CouplingFields, states_list: Sequence[states.State]
+) -> Sequence[pd.DataFrame]:
+    """
+    Generate a list of pandas DataFrames with the non-zero couplings between states
+    listed for each separate CouplingField input
+
+    Args:
+        fields (CouplingFields): coupling fields for a given transitions, with one for
+        each polarization
+        states_list (Sequence[states.State]): states involved in the system
+
+    Returns:
+        Sequence[pd.DataFrame]: list of DataFrames with non-zero couplings
+    """
+    dfs = []
+    for field in fields.fields:
+        dfs.append(_generate_coupling_dataframe(field, states_list))
+    return dfs
 
 
 def generate_coupling_field(
