@@ -8,7 +8,7 @@ from centrex_tlf_hamiltonian import states
 from centrex_tlf_hamiltonian.transitions import (
     MicrowaveTransition,
     OpticalTransition,
-    OpticalTransitionType
+    OpticalTransitionType,
 )
 from centrex_tlf_couplings.utils import check_transition_coupled_allowed
 from .polarization import Polarization
@@ -32,6 +32,7 @@ class TransitionSelector:
     type: Optional[str] = None
     ground_main: Optional[states.State] = None
     excited_main: Optional[states.State] = None
+    phase_modulation: bool = False
 
     def __repr__(self) -> str:
         if self.description is None:
@@ -47,6 +48,7 @@ def generate_transition_selectors(
     polarizations: Sequence[Sequence[Polarization]],
     ground_mains: Optional[Sequence[states.State]] = None,
     excited_mains: Optional[Sequence[states.State]] = None,
+    phase_modulations: Optional[Sequence[bool]] = None,
 ) -> List[TransitionSelector]:
     """
     Generate a list of TransitionSelectors from Transition(s) and Polarization(s).
@@ -87,6 +89,11 @@ def generate_transition_selectors(
                 1 * states.generate_coupled_states_X(transition.qn_select_excited)
             )
 
+        if phase_modulations is None:
+            phase_modulation = False
+        else:
+            phase_modulation = phase_modulations[idt]
+
         transition_selectors.append(
             TransitionSelector(
                 ground=ground_states_approx,
@@ -100,6 +107,7 @@ def generate_transition_selectors(
                 description=transition.name,
                 ground_main=None if ground_mains is None else ground_mains[idt],
                 excited_main=None if excited_mains is None else excited_mains[idt],
+                phase_modulation=phase_modulation,
             )
         )
     return transition_selectors
