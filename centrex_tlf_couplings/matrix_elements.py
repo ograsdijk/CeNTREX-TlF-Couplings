@@ -16,8 +16,13 @@ def generate_ED_ME_mixed_state(
     normalize_pol: bool = True,
 ) -> complex:
     ME = 0j
-    bra = bra.transform_to_omega_basis()
-    ket = ket.transform_to_omega_basis()
+
+    # Transform to Omega basis if required. For the X state the basis is Coupled and
+    # doesn't require to be transformed to the Omega basis, since Omega is 0.
+    if bra.largest.basis is states.Basis.CoupledP:
+        bra = bra.transform_to_omega_basis()
+    if ket.largest.basis is states.Basis.CoupledP:
+        ket = ket.transform_to_omega_basis()
 
     if normalize_pol:
         pol_vec /= np.linalg.norm(pol_vec)

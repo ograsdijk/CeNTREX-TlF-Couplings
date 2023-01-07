@@ -51,8 +51,9 @@ def test_generate_coupling_field_automatic():
     coupling = couplings.generate_coupling_field_automatic(
         ground_states, excited_states, QN, H_rot, QN, V_ref, pol_vecs, normalize_pol
     )
-    assert coupling.main_coupling == (0.4714045207910316 + 0j)
-    assert coupling.ground_main == ground_states[1]
-    assert coupling.excited_main == excited_states[0]
+
+    assert coupling.main_coupling == (-0.33333333333333326 + 0j)
+    assert coupling.ground_main == ground_states[-3]
+    assert coupling.excited_main == excited_states[1]
     assert np.all(coupling.fields[0].polarization == np.array([0.0, 0.0, 1.0]))
     assert np.all(coupling.fields[1].polarization == np.array([1.0, 0.0, 0.0]))
