@@ -1,10 +1,11 @@
 import copy
-from typing import List, Sequence
+from typing import List, Sequence, Union
 
 import numpy as np
 import numpy.typing as npt
 
 from .coupling_matrix import CouplingField, CouplingFields
+from centrex_tlf_hamiltonian import states
 
 __all__: List[str] = []
 
@@ -73,6 +74,24 @@ def compact_C_array_indices(
 
 
 def compact_coupling_field(
+    fields: CouplingFields,
+    QN: Sequence[states.State],
+    qn_compact: Union[Sequence[states.QuantumSelector], states.QuantumSelector],
+) -> CouplingFields:
+    if isinstance(qn_compact, states.QuantumSelector):
+        qn_compact = [qn_compact]
+
+    QN_compact = copy.deepcopy(QN)
+    for qnc in qn_compact:
+        indices_compact = states.get_indices_quantumnumbers(qnc, QN_compact)
+        QN_compact = states.compact_QN_coupled_indices(
+            QN_compact, indices_compact
+        )  # type: ignore
+        fields = compact_coupling_field_indices(fields, indices_compact)
+    return fields
+
+
+def compact_coupling_field_indices(
     fields: CouplingFields,
     indices_compact: Sequence[int],
 ) -> CouplingFields:
