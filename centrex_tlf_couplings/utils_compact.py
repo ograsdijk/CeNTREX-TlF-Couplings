@@ -3,9 +3,9 @@ from typing import List, Sequence, Union
 
 import numpy as np
 import numpy.typing as npt
+from centrex_tlf_hamiltonian import states
 
 from .coupling_matrix import CouplingField, CouplingFields
-from centrex_tlf_hamiltonian import states
 
 __all__: List[str] = []
 

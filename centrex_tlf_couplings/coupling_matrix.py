@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Sequence, Union
+from typing import Sequence
 
 import numpy as np
 import numpy.typing as npt
@@ -88,10 +88,12 @@ class CouplingFields:
     def __repr__(self):
         gs = self.ground_main.largest
         es = self.excited_main.largest
+        gs_str = gs.state_string_custom(["electronic", "J", "F1", "F", "mF", "P", "Ω"])
+        es_str = es.state_string_custom(["electronic", "J", "F1", "F", "mF", "P", "Ω"])
         return (
-            f"CouplingFields(ground_main={gs.state_string_custom(['electronic', 'J', 'F1', 'F', 'mF', 'P', 'Ω'])}, "
-            f"excited_main={es.state_string_custom(['electronic', 'J', 'F1', 'F', 'mF', 'P', 'Ω'])}, "
-            f"main_coupling={self.main_coupling:.2e}"
+            f"CouplingFields(ground_main={gs_str},"
+            f" excited_main={es_str},"
+            f" main_coupling={self.main_coupling:.2e}"
         )
 
 
@@ -153,12 +155,12 @@ def generate_coupling_field(
     absolute_coupling: float = 1e-6,
     normalize_pol: bool = True,
 ) -> CouplingFields:
-    assert isinstance(pol_main, np.ndarray), (
-        "supply a Sequence of np.ndarrays with " "dtype np.complex_ for pol_vecs"
-    )
-    assert isinstance(pol_vecs[0], np.ndarray), (
-        "supply a Sequence of np.ndarrays with " "dtype np.complex_ for pol_vecs"
-    )
+    assert isinstance(
+        pol_main, np.ndarray
+    ), "supply a Sequence of np.ndarrays with dtype np.complex_ for pol_vecs"
+    assert isinstance(
+        pol_vecs[0], np.ndarray
+    ), "supply a Sequence of np.ndarrays with dtype np.complex_ for pol_vecs"
     if not np.issubdtype(pol_main.dtype, np.complex_):
         pol_main.astype(np.complex_)
     if not np.issubdtype(pol_vecs[0].dtype, np.complex_):
@@ -258,9 +260,9 @@ def generate_coupling_field_automatic(
                                 polarization, containing the polarization and coupling
                                 field
     """
-    assert isinstance(pol_vecs[0], np.ndarray), (
-        "supply a Sequence of np.ndarrays with " "dtype np.float_ for pol_vecs"
-    )
+    assert isinstance(
+        pol_vecs[0], np.ndarray
+    ), "supply a Sequence of np.ndarrays with dtype np.float_ for pol_vecs"
     pol_main = pol_vecs[0]
     ground_main_approx, excited_main_approx = select_main_states(
         ground_states_approx, excited_states_approx, pol_main

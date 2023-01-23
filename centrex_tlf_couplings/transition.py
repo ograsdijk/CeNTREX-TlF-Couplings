@@ -10,7 +10,9 @@ from centrex_tlf_hamiltonian.transitions import (
     OpticalTransition,
     OpticalTransitionType,
 )
+
 from centrex_tlf_couplings.utils import check_transition_coupled_allowed
+
 from .polarization import Polarization
 
 __all__ = [
@@ -118,8 +120,8 @@ def get_possible_optical_transitions(
     transition_types: Optional[Sequence[OpticalTransitionType]] = None,
 ):
     J = ground_state.J
-    F1 = ground_state.F1
-    F = ground_state.F
+    # F1 = ground_state.F1
+    # F = ground_state.F
     I1 = ground_state.I1
     I2 = ground_state.I2
 

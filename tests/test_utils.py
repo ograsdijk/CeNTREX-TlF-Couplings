@@ -1,5 +1,5 @@
-import numpy as np
 from centrex_tlf_hamiltonian import states
+
 import centrex_tlf_couplings as couplings
 
 

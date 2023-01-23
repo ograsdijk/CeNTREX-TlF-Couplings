@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, Sequence
+from typing import List, Optional, Sequence
 
 import numpy as np
 import numpy.typing as npt
@@ -139,9 +139,7 @@ def generate_br_dataframe(
             bri = np.sum([br[i] for i in ind], axis=0)
             bri /= np.sum(bri)
             br_dataframe[
-                s.state_string_custom(  # type: ignore
-                    ["electronic", "J", "F1", "F"]
-                )
+                s.state_string_custom(["electronic", "J", "F1", "F"])  # type: ignore
             ] = bri[m]
     else:
         for idb, brv in enumerate(br):
