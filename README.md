@@ -1,3 +1,5 @@
+This repo is now archived; see `CeNTREX-TlF` and `CeNTREX-TlF-julia-extension` for the functionality of this package combined with `CeNTREX-TlF-Hamiltonian` and `CeNTREX-TlF-Lindblad`
+
 # CeNTREX-TlF-Couplings
 Code for generating the CeNTREX TlF couplings. 
 Includes code for generating branching ratios, electric dipole coupling elements and coupling fields
